@@ -166,6 +166,9 @@ def map_keys(f, d):
 def map_vals(f, d):
     return {k : f(v) for (k,v) in d.items()}
 
+def get_with_default(d, k, default):
+    return d[k] if k in d else default
+
 """
 Print functions
 """

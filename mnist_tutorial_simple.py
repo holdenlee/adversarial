@@ -22,6 +22,7 @@ flags.DEFINE_string('filename', 'mnist.ckpt', 'Filename to save model under.')
 flags.DEFINE_integer('nb_epochs', 6, 'Number of epochs to train model')
 flags.DEFINE_integer('batch_size', 128, 'Size of training batches')
 flags.DEFINE_float('learning_rate', 0.1, 'Learning rate for training')
+flags.DEFINE_float('epsilon', 0.3, 'Strength of attack')
 
 sess = tf.Session()
 
@@ -49,7 +50,7 @@ assert X_test.shape[0] == 10000, X_test.shape
 print('Test accuracy on legitimate test examples: ' + str(accuracy))
 
 # Craft adversarial examples using Fast Gradient Sign Method (FGSM)
-adv_x = fgsm(x, predictions, eps=0.3)
+adv_x = fgsm(x, predictions, eps=FLAGS.epsilon)
 X_test_adv, = batch_eval(sess, [x], [adv_x], [X_test])
 assert X_test_adv.shape[0] == 10000, X_test_adv.shape
 
@@ -60,7 +61,7 @@ print('Test accuracy on adversarial examples: ' + str(accuracy))
 # Redefine TF model graph
 model_2 = model_mnist()
 predictions_2 = model_2(x)
-adv_x_2 = fgsm(x, predictions_2, eps=0.3)
+adv_x_2 = fgsm(x, predictions_2, eps=FLAGS.epsilon)
 predictions_2_adv = model_2(adv_x_2)
 
 # Perform adversarial training

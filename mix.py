@@ -10,6 +10,7 @@ from tf_vars import *
 
 # ex. f = cnn_model
 # assume that f already takes the softmax
+# TODO: rewrite this without needing the batch size!
 def mix(x, fs, batch_size=128):
     t = len(fs)
     ys = []
@@ -21,6 +22,7 @@ def mix(x, fs, batch_size=128):
     # t
     #http://stackoverflow.com/questions/38222126/tensorflow-efficient-way-for-tensor-multiplication
     alphas = get_scope_variable('alphas', initializer=tf.constant(0.0,shape=[t]))
+    #Am I doing the right optimization for the alphas?
     #alphas = tf.Variable(tf.constant(0, shape=t))
     ws = tf.exp(alphas)
     ws_reshaped = tf.reshape(ws, [1, t, 1])
@@ -43,7 +45,7 @@ def cross_entropy(y, yhat, t=0):
 #def entropy(y, t=0):
 #    return tf.reduce_mean(-tf.reduce_sum(y * logt(y,t), reduction_indices=[-1]))
 def entropy_reg(ws, t=0):
-    return tf.reduce_mean(logt(ws,t))
+    return tf.reduce_mean(-logt(tf.nn.softmax(ws),t))
 
 def mix_loss(y, ys1): # ws, reg_weight):
     return cross_entropy(y, ys1, 0.00001) # + reg_weight * entropy(ws)
