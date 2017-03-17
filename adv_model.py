@@ -15,5 +15,7 @@ def make_adversarial_model(model, adv_f, x, *inputs):
         if s != 'regularization':
             d['adv_' + s] = adv_output[s]
     combined_loss = (loss + adv_output['loss']) / 2
+    combined_loss = tf.identity(combined_loss, name="combined_loss")
     d['combined_loss'] = combined_loss + reg
+    tf.add_to_collection('losses', d['combined_loss'])
     return d, epsilon

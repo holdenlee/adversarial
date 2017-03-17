@@ -151,12 +151,18 @@ class SummaryWriter(AddOn):
             for n in tf.get_default_graph().as_graph_def().node: # trainer.sess.graph?
                 print(n.name)
         printv("Summary writer initialized.", trainer.verbosity, 1)
+        #Note: doing this every step might be slower... Also it gets the dropout wrong...
+        #trainer.gets_dict['summary'] = self.summary_op
         return True
     def run(self, trainer):
         if valid_pos_int(self.summary_steps) and trainer.step % self.summary_steps == 0:
             printv("Running summary...", trainer.verbosity, 1)
             #feed_dict??
-            summary_str = trainer.sess.run(self.summary_op, feed_dict=self.feed_dict) #???
+            mod_feed_dict = merge_two_dicts(trainer.feed_dict, fill_feed_dict(self.feed_dict))
+            summary_str = trainer.sess.run(self.summary_op, feed_dict=mod_feed_dict)
+            trainer.outputs['summary'] = summary_str
+            #summary_str = trainer.sess.run(self.summary_op, feed_dict=self.feed_dict) #???
+            #summary_str = trainer.outputs['summary']
             self.summary_writer.add_summary(summary_str, trainer.step)
         return True
 
@@ -185,6 +191,7 @@ class Train(AddOn):
         self.train_feed = train_feed
         self.print_steps=print_steps
     def init(self, trainer):
+        trainer.gets_dict['loss'] = trainer.data[self.loss]
         deps = get_with_default(trainer.data, 'grad_deps', [])
         # Compute gradients.
         with tf.control_dependencies(deps):
@@ -199,13 +206,16 @@ class Train(AddOn):
     def run(self, trainer):
         start_time = time.time()
         feed_dict = fill_feed_dict2(trainer.train_data, self.batch_size, trainer.args_pl, self.train_feed)
+        trainer.feed_dict = feed_dict
         #map_feed_dict(merge_two_dicts(
         #  fill_feed_dict(trainer.train_data, self.batch_size, 
         #                 trainer.args_pl), self.train_feed))
         #print(feed_dict)
         #print(trainer.args_pl)
         #print(self.train_feed)
-        _, loss_value = trainer.sess.run([trainer.train_op, trainer.data[self.loss]], feed_dict=feed_dict)
+        #_, loss_value = trainer.sess.run([trainer.train_op, trainer.data[self.loss]], feed_dict=feed_dict)
+        trainer.outputs = trainer.sess.run(trainer.gets_dict, feed_dict=feed_dict)
+        loss_value = trainer.outputs['loss']
         duration = time.time() - start_time
         if (valid_pos_int(self.print_steps) and trainer.step % self.print_steps == 0):
             printv("Step %d took %f seconds. Loss: %f" % (trainer.step, duration, loss_value), trainer.verbosity, 1)
@@ -310,6 +320,8 @@ class Trainer:
         self.train_op = None
         self.args_pl = args_pl
         self.sess = sess
+        self.gets_dict = {}
+        self.outputs = {}
     def init(self):
         # create session
         if self.sess == None:
@@ -321,7 +333,8 @@ class Trainer:
         #init = tf.initialize_all_variables()
         with tf.control_dependencies(self.deps):
             train_op = tf.no_op(name='train')
-        self.train_op = train_op
+        self.train_op = train_op #deprecated - access using gets_dict instead 
+        self.gets_dict['train_op'] = train_op
         init_op = tf.global_variables_initializer()
         self.sess.run(init_op) #do this last
     def train_step(self):
@@ -357,7 +370,6 @@ class TrackAverages(AddOn): #fix: add in vars
         self.decay = decay
         self.name_fn = name_fn
     def init(self, trainer):
-        #tf.add_to_collection(name, value)
         op = add_avg(tf.get_collection("losses"), self.averages, self.decay, self.name_fn)
         if 'grad_deps' in trainer.data:
             trainer.data['grad_deps'].append(op)
@@ -384,7 +396,7 @@ def fill_feed_dict2(batch_feeder, batch_size, args_pl=None, feed = {}, args = []
     #feed_dict.update({args_pl[k] : feed[k] for k in feed if k in args_pl.items()})
     return feed_dict
 
-def fill_feed_dict(batch_feeder, batch_size, args_pl=None, args = []):
+def fill_feed_dict(batch_feeder, batch_size=None, args_pl=None, args = []):
   """Fills the feed_dict for training the given step. Args should be a list.
   A feed_dict takes the form of:
   feed_dict = {
@@ -393,7 +405,7 @@ def fill_feed_dict(batch_feeder, batch_size, args_pl=None, args = []):
   }"""
   # Create the feed_dict for the placeholders filled with the next
   # `batch size ` examples.
-  b = batch_feeder.next_batch(batch_size, *args)
+  b = batch_feeder.next_batch(batch_size, *args)  if batch_size != None else {}
   if args_pl != None:
       return {args_pl[k] : b[k] for (k,v) in args_pl.items() if k in b}
   else:

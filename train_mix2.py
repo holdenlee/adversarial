@@ -34,6 +34,23 @@ flags.DEFINE_float('reg_weight', 1, 'Weight on entropy regularizer')
 flags.DEFINE_float('epsilon', 0.3, 'Strength of attack')
 tf.app.flags.DEFINE_string('fake_data', False, 'Use fake data.  ')
 
+
+class Logger(AddOn):
+    def __init__(self, log_steps=100):
+        self.log_steps=log_steps
+    def init(self, trainer):
+        trainer.gets_dict['ws'] = trainer.data['ws']
+#        trainer.gets_dict['inference'] = trainer.data['inference']
+        trainer.gets_dict['ind_inference'] = trainer.data['ind_inference']
+        return True
+    def run(self, trainer):
+        step = trainer.step
+        if (valid_pos_int(self.log_steps) and step % self.log_steps == 0) or (step + 1) == trainer.max_step:
+            #printv("Predictions: %s" % str(trainer.outputs['inference']), trainer.verbosity, 1)
+            printv("Predictions: %s" % str(trainer.outputs['ind_inference']), trainer.verbosity, 1)
+            printv("Weights: %s" % str(trainer.outputs['ws']), trainer.verbosity, 1)
+        return True
+
 def main(_):
     X_train, Y_train, X_test, Y_test = data_mnist()
     assert Y_train.shape[1] == 10.
@@ -46,17 +63,25 @@ def main(_):
     sess = tf.Session()
     keras.backend.set_session(sess)
     model = cnn_model
-    models = 100*[model()]
+    #NO!!!
+    #models = FLAGS.t*[model()]
+    models = []
+    for i in range(FLAGS.t):
+        models.append(model())
     #Do I need to start the session first?
     if FLAGS.load == 'T':
         for i in range(FLAGS.t):
             load_model_t(FLAGS.load_from, models[i], i)
     def model(x, y):
-        predictions, ws = mix(x, models, FLAGS.batch_size)
+        predictions, ws, p_ind = mix(x, models, FLAGS.batch_size)
         loss = mix_loss(y, predictions)
+        loss = tf.identity(loss, name="loss")
         reg = FLAGS.reg_weight * entropy_reg(ws, 0.00001)
+        reg = tf.identity(reg, name="regularizer")
         acc = accuracy2(y, predictions)
-        return {'loss': loss, 'inference': predictions, 'accuracy': acc, 'regularizer' : reg}
+        tf.add_to_collection('losses', loss)
+        tf.add_to_collection('losses', reg)
+        return {'loss': loss, 'inference': predictions, 'accuracy': acc, 'regularizer' : reg, 'ws': ws, 'ind_inference' : p_ind}
     x = tf.placeholder(tf.float32, shape=(None, 28, 28, 1))
     y = tf.placeholder(tf.float32, shape=(None, 10))
     adv_model, epsilon = make_adversarial_model(model, fgsm, x, y)
@@ -68,6 +93,8 @@ def main(_):
                                                             epsilon=1e-08), FLAGS.batch_size, train_feed={'epsilon' : FLAGS.epsilon}, loss = 'combined_loss', print_steps=100),
                 Histograms(), #includes gradients, so has to be done after train
                 Saver(save_steps = 1000, checkpoint_path = 'model.ckpt'),
+                SummaryWriter(summary_steps = 100, feed_dict = {'keep_prob': 1.0}),
+                Logger(),
                 Eval(test_data, FLAGS.batch_size, ['accuracy'], eval_feed={}, eval_steps = 1000, name="test (real)"),
                 Eval(test_data, FLAGS.batch_size, ['adv_accuracy'], eval_feed={'epsilon': FLAGS.epsilon}, eval_steps = 1000, name="test (adversarial)")]
     #pl_dict, model = adv_mnist_fs()

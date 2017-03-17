@@ -29,7 +29,7 @@ def train_many(sess, f, t, X_train, Y_train, epochs = 1, X_test = None, Y_test =
     if do_eval:
         accs = []
     for i in range(t):
-        if cont and os.path.isfile(filepath + str(t) + '.hdf5'):
+        if cont and os.path.isfile(filepath + str(i) + '.hdf5'):
             continue
         printv('Training net '+str(i), verbosity, 1)
         model = f() #this is a Keras layer object, callable on tensors.
