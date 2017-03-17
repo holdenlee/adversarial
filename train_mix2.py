@@ -13,12 +13,13 @@ from mix import *
 from adv_model import *
 from tf_utils import *
 from train_many import *
+from random import random
 
 import keras.backend as K
 
 FLAGS = flags.FLAGS
 
-flags.DEFINE_string('train_dir', '/train_mix2', 'Directory storing the saved model.')
+flags.DEFINE_string('train_dir', 'train_mix2/', 'Directory storing the saved model.')
 flags.DEFINE_string('filename', 'mix.ckpt', 'Filename to save model under.')
 #flags.DEFINE_integer('nb_epochs', 6, 'Number of epochs to train model')
 flags.DEFINE_integer('batch_size', 100, 'Size of training batches. Must divide evenly into the dataset sizes. (FIX this later)')
@@ -40,22 +41,35 @@ class Logger(AddOn):
         self.log_steps=log_steps
     def init(self, trainer):
         trainer.gets_dict['ws'] = trainer.data['ws']
-#        trainer.gets_dict['inference'] = trainer.data['inference']
-        trainer.gets_dict['ind_inference'] = trainer.data['ind_inference']
+        #trainer.gets_dict['inference'] = trainer.data['inference']
+        #trainer.gets_dict['ind_inference'] = trainer.data['ind_inference']
         return True
     def run(self, trainer):
         step = trainer.step
         if (valid_pos_int(self.log_steps) and step % self.log_steps == 0) or (step + 1) == trainer.max_step:
             #printv("Predictions: %s" % str(trainer.outputs['inference']), trainer.verbosity, 1)
-            printv("Predictions: %s" % str(trainer.outputs['ind_inference']), trainer.verbosity, 1)
+            #printv("Predictions: %s" % str(trainer.outputs['ind_inference']), trainer.verbosity, 1)
             printv("Weights: %s" % str(trainer.outputs['ws']), trainer.verbosity, 1)
         return True
+
+def make_batch_feeder_ep(args, ep_f, refresh_f=shuffle_refresh, num_examples = None):
+    if num_examples==None:
+        l = len(list(args.values())[0]) #fix for python 3
+    else:
+        l = num_examples
+    def f(bf, batch_size): 
+        d = batch_feeder_f(bf, batch_size, refresh_f)
+        d['epsilon'] = ep_f()
+    return BatchFeeder(args, l, f)
+
+evals = [Eval(test_data, FLAGS.batch_size, ['adv_accuracy'], eval_feed={'epsilon': i*0.1}, eval_steps = 1000, name="test (adversarial @ %f)" % (i*0.1)) for i in range(1,6)]
 
 def main(_):
     X_train, Y_train, X_test, Y_test = data_mnist()
     assert Y_train.shape[1] == 10.
     Y_train = Y_train.clip(FLAGS.label_smooth / 9., 1. - FLAGS.label_smooth)
     train_data = make_batch_feeder({'x': X_train, 'y':Y_train})
+    #train_data = make_batch_feeder({'x': X_train, 'y':Y_train}, lambda: 0.5 * random())
     test_data = make_batch_feeder({'x': X_test, 'y':Y_test}) #don't need to shuffle here
     # https://github.com/fchollet/keras/issues/2310
     #K._LEARNING_PHASE = tf.constant(0)
@@ -97,6 +111,7 @@ def main(_):
                 Logger(),
                 Eval(test_data, FLAGS.batch_size, ['accuracy'], eval_feed={}, eval_steps = 1000, name="test (real)"),
                 Eval(test_data, FLAGS.batch_size, ['adv_accuracy'], eval_feed={'epsilon': FLAGS.epsilon}, eval_steps = 1000, name="test (adversarial)")]
+                # + evals
     #pl_dict, model = adv_mnist_fs()
     trainer = Trainer(adv_model, FLAGS.max_steps, train_data, addons, ph_dict, train_dir = FLAGS.train_dir, verbosity=1, sess=sess)
     trainer.init_and_train()
