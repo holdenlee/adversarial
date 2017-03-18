@@ -32,16 +32,10 @@ flags.DEFINE_integer('label_smooth', 0.1, 'How much to clip y values (0 for no c
 
 # ^ Do I need to include these in every file, or just in main file?
 
-default_train_params = {
-        'nb_epochs': FLAGS.nb_epochs,
-        'batch_size': FLAGS.batch_size,
-        'learning_rate': FLAGS.learning_rate
-    }
-
 #if __name__ == '__main__': 
 def main(argv=None):
-    sess = tf.Session()
-    keras.backend.set_session(sess)
+    #sess = tf.Session()
+    #keras.backend.set_session(sess)
 
     X_train, Y_train, X_test, Y_test = data_mnist()
     assert Y_train.shape[1] == 10.
@@ -51,10 +45,12 @@ def main(argv=None):
         X_train = X_train[1:256]
         Y_train = Y_train[1:256]
     # Define input TF placeholder
-    x = tf.placeholder(tf.float32, shape=(None, 28, 28, 1))
-    y = tf.placeholder(tf.float32, shape=(None, 10))
+    #x = tf.placeholder(tf.float32, shape=(None, 28, 28, 1))
+    #y = tf.placeholder(tf.float32, shape=(None, 10))
     filepath = FLAGS.train_dir+FLAGS.filename
-    models, accs = train_many_and_save(filepath, sess, cnn_model, FLAGS.t, X_train, Y_train, epochs = 1, X_test = X_test, Y_test = Y_test, do_eval=True, train_params = default_train_params)
+    models, accs = train_many_and_save(filepath, cnn_model, FLAGS.t, X_train, Y_train, epochs = 1, X_test = X_test, Y_test = Y_test, do_eval=True)
+#def train_many_and_save(filepath, f, t, X_train, Y_train, epochs = 1, X_test = None, Y_test = None, do_eval=False, train_params = {}):
+
 
 if __name__ == '__main__':
     app.run()

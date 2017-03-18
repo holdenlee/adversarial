@@ -335,8 +335,9 @@ class Trainer:
             train_op = tf.no_op(name='train')
         self.train_op = train_op #deprecated - access using gets_dict instead 
         self.gets_dict['train_op'] = train_op
-        init_op = tf.global_variables_initializer()
-        self.sess.run(init_op) #do this last
+        #init_op = tf.global_variables_initializer()
+        #self.sess.run(init_op) #do this last
+        self.sess.run(tf.variables_initializer(get_uninitialized_variables(self.sess)))
     def train_step(self):
         for addon in self.addons:
             t = addon.run(self)
@@ -448,3 +449,28 @@ def valid_pos_int(n):
 """
 https://www.tensorflow.org/api_docs/python/tf/train/ExponentialMovingAverage
 """
+
+#http://stackoverflow.com/questions/35164529/in-tensorflow-is-there-any-way-to-just-initialize-uninitialised-variables
+def get_uninitialized_variables(sess=None, variables=None):
+    """Get uninitialized variables as a list.
+
+    Parameters
+    ----------
+    variables : collections.Iterable[tf.Variable]
+        Return only uninitialized variables within this collection.
+        If not specified, will return all uninitialized variables.
+
+    Returns
+    -------
+    list[tf.Variable]
+    """
+    if sess == None:
+        sess = tf.get_default_session()
+    if variables is None:
+        variables = tf.global_variables()
+    else:
+        variables = list(variables)
+    init_flag = sess.run([tf.is_variable_initialized(v) for v in variables])
+    #FOR TEST
+    print(list(zip(variables, init_flag)))
+    return [v for v, f in zip(variables, init_flag) if not f]

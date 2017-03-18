@@ -35,7 +35,7 @@ def train_many(f, t, X_train, Y_train, epochs = 1, X_test = None, Y_test = None,
                       metrics=['accuracy'])
         model.fit(X_train, Y_train, epochs=epochs, batch_size=32)
         if do_eval:
-            loss_and_metrics = model.evaluate(X_test, Y_test, batch_size=128)
+            loss_and_metrics = model.evaluate(x_test, y_test, batch_size=128)
             printv(loss_and_metrics, verbosity, 1)
             accs.append(loss_and_metrics)
         models.append(model)
@@ -52,8 +52,8 @@ def save_model_t(filepath, model, t, accuracy=None):
 def load_model_t(filepath, model, t):
     model.load_weights(filepath + str(t) + '.hdf5')
 
-def train_many_and_save(filepath, f, t, X_train, Y_train, epochs = 1, X_test = None, Y_test = None, do_eval=False):
-    output = train_many(f, t, X_train, Y_train, epochs, X_test, Y_test, do_eval, fn_model = lambda model, t, accuracy: save_model_t(filepath, model, t, accuracy))
+def train_many_and_save(filepath, f, t, X_train, Y_train, epochs = 1, X_test = None, Y_test = None, do_eval=False, train_params = {}):
+    output = train_many(f, t, X_train, Y_train, epochs, X_test, Y_test, do_eval, train_params, fn_model = lambda model, t, accuracy: save_model_t(filepath, model, t, accuracy))
     #print(output)
     if do_eval:
         np.savetxt(filepath + '_accs.txt', output[1])
