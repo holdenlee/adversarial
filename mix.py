@@ -11,7 +11,7 @@ from tf_vars import *
 # ex. f = cnn_model
 # assume that f already takes the softmax
 # TODO: rewrite this without needing the batch size!
-def mix(x, fs, batch_size=128):
+def mix(x, fs, batch_size=100): #128
     t = len(fs)
     ys = []
     for i in range(t):

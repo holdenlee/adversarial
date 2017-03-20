@@ -13,17 +13,22 @@ Run every time:
 . ./start
 ```
 
+Python 3 seems to have a problem; I used python 2.
+
 ## Control
 
 Control: adversarially train net for 100 epochs.
 
 ```
-# control
+# 0.3
 mkdir single_epochs100_ep0.3 
-nohup python train_single.py --train_dir=single_epochs100_ep0.3 --max_steps=60000 --epsilon=0.3 > single_epochs100_ep0.3/log.txt 2>&1 &
-
+nohup python2 train_single.py --train_dir=single_epochs100_ep0.3 --max_steps=60000 --epsilon=0.3 > single_epochs100_ep0.3/log.txt 2>&1 &
+# 0.5
 mkdir single_epochs100_ep0.5 
-nohup python train_single.py --train_dir=single_epochs100_ep0.5 --max_steps=60000 --epsilon=0.5 > single_epochs100_ep0.5/log.txt 2>&1 &
+nohup python2 train_single.py --train_dir=single_epochs100_ep0.5 --max_steps=60000 --epsilon=0.5 > single_epochs100_ep0.5/log.txt 2>&1 &
+# 1.0 (sanity check)
+mkdir single_epochs100_ep1
+nohup python2 train_single.py --train_dir=single_epochs100_ep1 --max_steps=60000 --epsilon=1.0 > single_epochs100_ep1/log.txt 2>&1 &
 ```
 
 ## Pretraining
@@ -32,6 +37,40 @@ Pretrain 100 nets for 1 epoch.
 
 ```
 mkdir pretrain
-nohup python train_many_run.py --t=100 > pretrain/log.txt 2>&1 &
+nohup python2 train_many_run.py --t=100 > pretrain/log.txt 2>&1 &
 ```
 
+## Train mixture
+
+Training a mixture of 10 nets.
+```
+# 0.3
+mkdir mix10_pretrain1_epochs100_ep0.3_reg0.5 
+nohup python train_mix.py --train_dir=mix10_pretrain1_epochs100_ep0.3_reg0.5/ --t=10 --max_steps=60000 --epsilon=0.3 --reg_weight=0.5 > mix10_pretrain1_epochs100_ep0.3_reg0.5/log.txt 2>&1 &
+# 0.5
+mkdir mix10_pretrain1_epochs100_ep0.5_reg0.5 
+nohup python train_mix.py --train_dir=mix10_pretrain1_epochs100_ep0.5_reg0.5/ --t=10 --max_steps=60000 --epsilon=0.5 --reg_weight=0.5 > mix10_pretrain1_epochs100_ep0.5_reg0.5/log.txt 2>&1 &
+# 1
+mkdir mix10_pretrain1_epochs100_ep1_reg0.5 
+nohup python train_mix.py --train_dir=mix10_pretrain1_epochs100_ep1_reg0.5/ --t=10 --max_steps=60000 --epsilon=1.0 --reg_weight=0.5 > mix10_pretrain1_epochs100_ep1_reg0.5/log.txt 2>&1 &
+```
+
+Train mixture of 100.
+```
+# 0.3
+mkdir mix100_pretrain1_epochs100_ep0.3_reg0.5 
+nohup python train_mix.py --train_dir=mix100_pretrain1_epochs100_ep0.3_reg0.5/ --t=100 --max_steps=60000 --epsilon=0.3 --reg_weight=0.5 > mix10_pretrain1_epochs100_ep0.3_reg0.5/log.txt 2>&1 &
+# 0.5
+mkdir mix100_pretrain1_epochs100_ep0.5_reg0.5 
+nohup python train_mix.py --train_dir=mix100_pretrain1_epochs100_ep0.5_reg0.5/ --t=100 --max_steps=60000 --epsilon=0.5 --reg_weight=0.5 > mix10_pretrain1_epochs100_ep0.5_reg0.5/log.txt 2>&1 &
+# 1
+mkdir mix100_pretrain1_epochs100_ep1_reg0.5 
+nohup python train_mix.py --train_dir=mix100_pretrain1_epochs100_ep1_reg0.5/ --t=100 --max_steps=60000 --epsilon=1.0 --reg_weight=0.5 > mix10_pretrain1_epochs100_ep1_reg0.5/log.txt 2>&1 &
+```
+
+## Plotting
+
+```
+mkdir plots
+python plots.py
+```

@@ -21,6 +21,7 @@ FLAGS = flags.FLAGS
 
 flags.DEFINE_string('train_dir', 'train_mix2/', 'Directory storing the saved model.')
 flags.DEFINE_string('filename', 'mix.ckpt', 'Filename to save model under.')
+flags.DEFINE_string('adv', 'fgsm', 'Type of adversary.')
 #flags.DEFINE_integer('nb_epochs', 6, 'Number of epochs to train model')
 flags.DEFINE_integer('batch_size', 100, 'Size of training batches. Must divide evenly into the dataset sizes. (FIX this later)')
 #for batch_size = 100, is 600 times nb_epochs
@@ -66,7 +67,7 @@ def make_batch_feeder_ep(args, ep_f, refresh_f=shuffle_refresh, num_examples = N
         d['epsilon'] = ep_f()
     return BatchFeeder(args, l, f)
 
-def mix_model(t=100, many_files=True, load_from=None, verbosity=1):
+def mix_model(t=100, many_files=True, load_from=None, adv = fgsm, verbosity=1):
     model = cnn_model
     models = []
     for i in range(t):
@@ -87,10 +88,15 @@ def mix_model(t=100, many_files=True, load_from=None, verbosity=1):
         return {'loss': loss, 'inference': predictions, 'accuracy': acc, 'regularizer' : reg, 'ws': ws, 'ind_inference' : p_ind}
     x = tf.placeholder(tf.float32, shape=(None, 28, 28, 1))
     y = tf.placeholder(tf.float32, shape=(None, 10))
-    adv_model, epsilon = make_adversarial_model(model, fgsm, x, y)
+    adv_model, epsilon = make_adversarial_model(model, adv, x, y)
     ph_dict = {'x': x, 'y': y, 'epsilon': epsilon}
     return adv_model, ph_dict, epsilon
 
+def make_evals(test_data, batch_size=FLAGS.batch_size, ep_increment = 0.1, ep_range = 5):
+    return [Eval(test_data, batch_size, ['adv_accuracy'], eval_feed={'epsilon': i*ep_increment}, eval_steps = FLAGS.eval_steps, name="test (adversarial %f)" % (i*ep_increment)) for i in range(1,ep_range+1)]
+
+#def name_train_dir():
+#    return "mix%d_pretrain1_epochs%d_ep%f_reg%f" % (FLAGS.t, FLAGS.max_steps//600, FLAGS.reg_weight)
 
 def main(_):
     X_train, Y_train, X_test, Y_test = data_mnist()
@@ -104,8 +110,16 @@ def main(_):
     K.set_learning_phase(1)
     sess = tf.Session()
     keras.backend.set_session(sess)
+    if FLAGS.adv == 'fgsm':
+        adv = fgsm
+    elif FLAGS.adv == 'fgm':
+        adv = fgm
+    else:
+        print("Invalid adv. Defaulting to fgsm")
+        adv = fgsm
     adv_model, ph_dict, epsilon = mix_model(t=FLAGS.t, many_files=(FLAGS.load=='T'), load_from=FLAGS.load_from)
-    evals = [Eval(test_data, FLAGS.batch_size, ['adv_accuracy'], eval_feed={'epsilon': i*0.1}, eval_steps = 1000, name="test (adversarial @ %f)" % (i*0.1)) for i in range(1,6)]
+    evals = make_evals(test_data, batch_size=FLAGS.batch_size, ep_increment = 0.1, ep_range = 5)
+    #evals = [Eval(test_data, FLAGS.batch_size, ['adv_accuracy'], eval_feed={'epsilon': i*0.1}, eval_steps = 1000, name="test (adversarial @ %f)" % (i*0.1)) for i in range(1,6)]
     addons = [GlobalStep(),
                 TrackAverages(), #do this before train (why?)
                 Train(lambda gs: tf.train.AdadeltaOptimizer(learning_rate=FLAGS.learning_rate, #0.1
