@@ -127,6 +127,8 @@ class AddOn:
         return True
     def run(self, trainer):
         return True
+    def end(self, trainer):
+        pass
 
 class GlobalStep(AddOn):
     def __init__(self):
@@ -246,6 +248,7 @@ class Eval(AddOn):
         self.eval_feed = eval_feed
         self.eval_steps = eval_steps
         self.name = name
+        self.record = []
     def init(self, trainer):
         pass
     def run(self, trainer):
@@ -254,7 +257,7 @@ class Eval(AddOn):
             valid_pos_int(step) and
             ((step % self.eval_steps == 0) or (step + 1) == trainer.max_step)):
             printv("Doing evaluation for %s" % self.name, trainer.verbosity, 1)
-            do_eval(trainer.sess, 
+            metrics_avg = do_eval(trainer.sess, 
                     trainer.data,
                     self.metrics, 
                     self.batch_feeder,
@@ -262,7 +265,11 @@ class Eval(AddOn):
                     args_pl = trainer.args_pl,
                     eval_feed = self.eval_feed,
                     verbosity = trainer.verbosity)
+            self.record.append(metrics_avg)
         return True
+    def end(self, trainer):
+        np.savetxt(os.path.join(trainer.train_dir, self.name + ".txt"), self.record)
+        
 
 def do_eval(sess,
             data,
@@ -353,6 +360,9 @@ class Trainer:
     def init_and_train(self):
         self.init()
         self.train()
+    def finish(self):
+        for addon in self.addons:
+            addon.end(self)
 
 class Histograms(AddOn):
     def __init__(self):
@@ -472,5 +482,5 @@ def get_uninitialized_variables(sess=None, variables=None):
         variables = list(variables)
     init_flag = sess.run([tf.is_variable_initialized(v) for v in variables])
     #FOR TEST
-    print(list(zip(variables, init_flag)))
+    #print(list(zip(variables, init_flag)))
     return [v for v, f in zip(variables, init_flag) if not f]

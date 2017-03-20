@@ -25,8 +25,12 @@ flags.DEFINE_string('filename', 'mix.ckpt', 'Filename to save model under.')
 flags.DEFINE_integer('batch_size', 100, 'Size of training batches. Must divide evenly into the dataset sizes. (FIX this later)')
 #for batch_size = 100, is 600 times nb_epochs
 flags.DEFINE_integer('max_steps', 3600, 'Number of steps to run trainer.')
+flags.DEFINE_integer('print_steps', 100, 'Print progress every...')
 flags.DEFINE_integer('eval_steps', 600, 'Run evaluation every...')
+flags.DEFINE_integer('save_steps', 1200, 'Run evaluation every...')
+flags.DEFINE_integer('summary_steps', 1200, 'Run summary every...')
 flags.DEFINE_float('learning_rate', 0.1, 'Learning rate for training')
+flags.DEFINE_integer('verbosity', 1, 'How chatty')
 flags.DEFINE_string('load', 'T', 'Whether to load nets')
 flags.DEFINE_string('load_from', 'pretrain/nets', 'Whether to run control experiment')
 flags.DEFINE_integer('t', 100, 'Number of nets')
@@ -61,8 +65,6 @@ def make_batch_feeder_ep(args, ep_f, refresh_f=shuffle_refresh, num_examples = N
         d = batch_feeder_f(bf, batch_size, refresh_f)
         d['epsilon'] = ep_f()
     return BatchFeeder(args, l, f)
-
-#evals = [Eval(test_data, FLAGS.batch_size, ['adv_accuracy'], eval_feed={'epsilon': i*0.1}, eval_steps = 1000, name="test (adversarial @ %f)" % (i*0.1)) for i in range(1,6)]
 
 def mix_model(t=100, many_files=True, load_from=None, verbosity=1):
     model = cnn_model
@@ -102,47 +104,24 @@ def main(_):
     K.set_learning_phase(1)
     sess = tf.Session()
     keras.backend.set_session(sess)
-    """
-    model = cnn_model
-    #NO!!!
-    #models = FLAGS.t*[model()]
-    models = []
-    for i in range(FLAGS.t):
-        models.append(model())
-    #Do I need to start the session first?
-    if FLAGS.load == 'T':
-        for i in range(FLAGS.t):
-            load_model_t(FLAGS.load_from, models[i], i)
-    def model(x, y):
-        predictions, ws, p_ind = mix(x, models, FLAGS.batch_size)
-        loss = mix_loss(y, predictions)
-        loss = tf.identity(loss, name="loss")
-        reg = FLAGS.reg_weight * entropy_reg(ws, 0.00001)
-        reg = tf.identity(reg, name="regularizer")
-        acc = accuracy2(y, predictions)
-        tf.add_to_collection('losses', loss)
-        tf.add_to_collection('losses', reg)
-        return {'loss': loss, 'inference': predictions, 'accuracy': acc, 'regularizer' : reg, 'ws': ws, 'ind_inference' : p_ind}
-    x = tf.placeholder(tf.float32, shape=(None, 28, 28, 1))
-    y = tf.placeholder(tf.float32, shape=(None, 10))
-    adv_model, epsilon = make_adversarial_model(model, fgsm, x, y)
-    ph_dict = {'x': x, 'y': y, 'epsilon': epsilon}"""
     adv_model, ph_dict, epsilon = mix_model(t=FLAGS.t, many_files=(FLAGS.load=='T'), load_from=FLAGS.load_from)
+    evals = [Eval(test_data, FLAGS.batch_size, ['adv_accuracy'], eval_feed={'epsilon': i*0.1}, eval_steps = 1000, name="test (adversarial @ %f)" % (i*0.1)) for i in range(1,6)]
     addons = [GlobalStep(),
                 TrackAverages(), #do this before train (why?)
                 Train(lambda gs: tf.train.AdadeltaOptimizer(learning_rate=FLAGS.learning_rate, #0.1
                                                             rho=0.95,
-                                                            epsilon=1e-08), FLAGS.batch_size, train_feed={'epsilon' : FLAGS.epsilon}, loss = 'combined_loss', print_steps=100),
+                                                            epsilon=1e-08), FLAGS.batch_size, train_feed={'epsilon' : FLAGS.epsilon}, loss = 'combined_loss', print_steps=FLAGS.print_steps),
                 Histograms(), #includes gradients, so has to be done after train
-                Saver(save_steps = 1000, checkpoint_path = 'model.ckpt'),
-                SummaryWriter(summary_steps = 100, feed_dict = {'keep_prob': 1.0}),
+                Saver(save_steps = FLAGS.save_steps, checkpoint_path = os.path.join(FLAGS.train_dir, 'model.ckpt')),
+                SummaryWriter(summary_steps = 100, feed_dict = {}),
                 Logger(),
-                Eval(test_data, FLAGS.batch_size, ['accuracy'], eval_feed={}, eval_steps = FLAGS.eval_steps, name="test (real)"),
-                Eval(test_data, FLAGS.batch_size, ['adv_accuracy'], eval_feed={'epsilon': FLAGS.epsilon}, eval_steps = FLAGS.eval_steps, name="test (adversarial)")]
+                Eval(test_data, FLAGS.batch_size, ['accuracy'], eval_feed={}, eval_steps = FLAGS.eval_steps, name="test (real)")] + evals
+                #Eval(test_data, FLAGS.batch_size, ['adv_accuracy'], eval_feed={'epsilon': FLAGS.epsilon}, eval_steps = FLAGS.eval_steps, name="test (adversarial)")] 
                 # + evals
     #pl_dict, model = adv_mnist_fs()
-    trainer = Trainer(adv_model, FLAGS.max_steps, train_data, addons, ph_dict, train_dir = FLAGS.train_dir, verbosity=1, sess=sess)
+    trainer = Trainer(adv_model, FLAGS.max_steps, train_data, addons, ph_dict, train_dir = FLAGS.train_dir, verbosity=FLAGS.verbosity, sess=sess)
     trainer.init_and_train()
+    trainer.finish()
 
 if __name__=='__main__':
     app.run()

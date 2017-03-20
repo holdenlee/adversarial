@@ -1,0 +1,4 @@
+#!/bin/bash
+
+export PYTHONPATH="/home/optml/holdenl/cleverhans":$PYTHONPATH # do every time
+source ~/keras_tf/bin/activate # do every time

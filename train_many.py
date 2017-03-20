@@ -18,9 +18,6 @@ from keras import backend
 
 from utils import *
 
-# X_train, Y_train, X_test, Y_test = data_mnist()
-# train t neural nets whose model is f
-# f, when called `f()`, should give a function, tensor -> tensor. Recommended: f is a Keras layer. Ex. f = cnn_model
 def train_many(f, t, X_train, Y_train, epochs = 1, X_test = None, Y_test = None, do_eval=False, fn_model = None, cont = False, verbosity = 1):
     models = []
     if do_eval:
