@@ -137,8 +137,9 @@ def nested_for_(li, f):
 
 def list_prod(llis):
     if llis==[]:
-        return []
-    return [[llis[0]].append(li) for li in list_prod(llis[1:])]
+        return [[]]
+    return [li+[x] for li in list_prod(llis[:-1]) for x in llis[-1]]
+    #return [[x]+li for li in list_prod(llis[1:]) for x in llis[0]]
 
 # like nested_for, but flattened.
 def fors(llis, f):

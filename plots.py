@@ -33,4 +33,4 @@ if __name__=='__main__':
     make_plots([("Single, adversarial training, fgsm 0.3", "single_epochs100_ep0.3"),
                 ("Single, adversarial training, fgsm 0.5", "single_epochs100_ep0.5"),
                 ("Single, adversarial training, fgsm 1.0", "single_epochs100_ep1"),
-                ("Mix 10, pretrained, fgsm 0.3, reg 0.5", "mix10_pretrain1_epochs100_ep0.3_reg0.5")], "plots")
+                ("Mix 100, pretrained, fgsm 0.3, reg 0.5", "mix100_pretrain1_epochs100_ep0.3_reg0.5")], "plots")

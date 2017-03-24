@@ -4,6 +4,7 @@ import itertools
 import inspect
 from datetime import datetime
 import re
+import os
 import os.path
 import time
 import numpy as np
@@ -309,7 +310,11 @@ def do_eval(sess,
   return metrics_avg
   #printv('  Num examples: %d  Num correct: %d  Precision @ 1: %0.04f' %
   #       (num_examples, true_count, precision), verbosity, 1)
-
+	
+def ensure_dir(file_path):
+    directory = os.path.dirname(file_path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
 class Trainer:
     def __init__(self, model, max_step, train_data, addons, args_pl, train_dir = "train/", verbosity=1, sess=None): #test_bf=None, valid_bf=None, verbosity=1):
@@ -329,6 +334,7 @@ class Trainer:
         self.sess = sess
         self.gets_dict = {}
         self.outputs = {}
+        ensure_dir(train_dir)
     def init(self):
         # create session
         if self.sess == None:
