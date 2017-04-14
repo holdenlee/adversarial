@@ -43,6 +43,9 @@ def make_batch_feeder_ep(args, ep_f, refresh_f=shuffle_refresh, num_examples = N
         d['epsilon'] = ep_f()
     return BatchFeeder(args, l, f)
 
+def fgsm_clip(x, predictions, eps):
+    return fgsm(x,predictions,eps,0,1)
+
 def mix_model(t=100, many_files=True, load_from=None, adv = fgsm, reg_weight=1.0, batch_size=100, verbosity=1):
     model = cnn_model
     models = []
@@ -92,6 +95,10 @@ def make_trainer(X_train, Y_train, X_test, Y_test, adv='fgsm', t=100, load='T', 
         adv = fgsm
     elif adv == 'fgm':
         adv = fgm
+    elif adv == 'fgsm_clip':
+        adv = fgsm_clip
+    elif adv == 'fgm_clip':
+        adv = fgm_clip
     else:
         pass
         #print("Invalid adv. Defaulting to fgsm")

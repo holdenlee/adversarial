@@ -490,3 +490,21 @@ def get_uninitialized_variables(sess=None, variables=None):
     #FOR TEST
     #print(list(zip(variables, init_flag)))
     return [v for v, f in zip(variables, init_flag) if not f]
+
+#assume is already an average
+def quick_avg2(sess, var, var_x, x, var_y, y, bsize=128, feeds={}):
+    l=len(x)
+    s = 0
+    for i in range(l//bsize):
+        ans = sess.run(var, feed_dict = merge_two_dicts({var_x:x[i*bsize:i*bsize+bsize], 
+                                                         var_y:y[i*bsize:i*bsize+bsize]}, feeds))
+        s += ans
+    i = l//bsize
+    if i * bsize < bsize:
+        bsize2 = bsize - i*bsize
+        ans = sess.run(var, feed_dict = merge_two_dicts({var_x:x[i*bsize:], 
+                                                         var_y:y[i*bsize:]}, feeds))
+        avg = (s + bsize2/bsize * ans) / (i + bsize2/bsize)
+        return avg
+    else:
+        return s/i

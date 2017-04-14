@@ -7,9 +7,8 @@ from tensorflow.python.platform import flags
 from cleverhans.utils_mnist import data_mnist
 from cleverhans.utils_tf import model_train, model_eval, batch_eval
 from cleverhans.attacks import fgsm
-from cleverhans.utils import cnn_model
 
-from mnist_model import *
+from mnist_models import *
 
 import os.path
 
@@ -48,7 +47,7 @@ def main(argv=None):
     #x = tf.placeholder(tf.float32, shape=(None, 28, 28, 1))
     #y = tf.placeholder(tf.float32, shape=(None, 10))
     filepath = FLAGS.train_dir+FLAGS.filename
-    models, accs = train_many_and_save(filepath, cnn_model, FLAGS.t, X_train, Y_train, epochs = FLAGS.nb_epochs, X_test = X_test, Y_test = Y_test, do_eval=True)
+    models, accs = train_many_and_save(filepath, model2, FLAGS.t, X_train, Y_train, epochs = FLAGS.nb_epochs, X_test = X_test, Y_test = Y_test, do_eval=True)
 #def train_many_and_save(filepath, f, t, X_train, Y_train, epochs = 1, X_test = None, Y_test = None, do_eval=False, train_params = {}):
 
 

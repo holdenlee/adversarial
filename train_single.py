@@ -36,7 +36,11 @@ flags.DEFINE_float('learning_rate', 0.1, 'Learning rate for training')
 flags.DEFINE_integer('verbosity', 1, 'How chatty')
 flags.DEFINE_float('label_smooth', 0.1, 'How much to clip y values (0 for no clipping)')
 flags.DEFINE_float('epsilon', 0.3, 'Strength of attack')
-tf.app.flags.DEFINE_string('fake_data', False, 'Use fake data.  ')
+flags.DEFINE_string('clip', 'T', 'Whether to clip values to [0,1]')
+flags.DEFINE_string('fake_data', False, 'Use fake data.  ')
+
+def fgsm_clip(x, predictions, eps):
+    return fgsm(x,predictions,eps,0,1)
 
 def make_batch_feeder_ep(args, ep_f, refresh_f=shuffle_refresh, num_examples = None):
     if num_examples==None:
@@ -48,8 +52,8 @@ def make_batch_feeder_ep(args, ep_f, refresh_f=shuffle_refresh, num_examples = N
         d['epsilon'] = ep_f()
     return BatchFeeder(args, l, f)
 
-def single_model():
-    m = cnn_model()
+def single_model(adv_f = fgsm, f=cnn_model):
+    m = f()
     #THIS MUST BE OUTSIDE otherwise 2 copies will be made!
     def model(x,y):
         predictions = m(x)
@@ -60,7 +64,7 @@ def single_model():
         return {'loss': loss, 'inference': predictions, 'accuracy': acc}
     x = tf.placeholder(tf.float32, shape=(None, 28, 28, 1))
     y = tf.placeholder(tf.float32, shape=(None, 10))
-    adv_model, epsilon = make_adversarial_model(model, fgsm, x, y)
+    adv_model, epsilon = make_adversarial_model(model, adv_f, x, y)
     ph_dict = {'x': x, 'y': y, 'epsilon': epsilon}
     return adv_model, ph_dict, epsilon
 
@@ -87,6 +91,9 @@ def main(_):
     #           Eval(test_data, FLAGS.batch_size, ['adv_accuracy'], eval_feed={'epsilon': FLAGS.epsilon}, eval_steps = FLAGS.eval_steps, name="test (adversarial)")]
                 # + evals
     #pl_dict, model = adv_mnist_fs()
+    #print(FLAGS)
+    #print(FLAGS.epsilon)
+    p#rint(FLAGS.train_dir)
     trainer = Trainer(adv_model, FLAGS.max_steps, train_data, addons, ph_dict, train_dir = FLAGS.train_dir, verbosity=FLAGS.verbosity, sess=sess)
     trainer.init_and_train()
     trainer.finish()

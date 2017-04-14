@@ -10,6 +10,7 @@ from cleverhans.attacks import fgsm
 from cleverhans.utils import cnn_model
 
 from mnist_model import *
+from mnist_models import *
 
 import os.path
 
@@ -36,7 +37,6 @@ flags.DEFINE_integer('label_smooth', 0.1, 'How much to clip y values (0 for no c
 def main(argv=None):
     #sess = tf.Session()
     #keras.backend.set_session(sess)
-
     X_train, Y_train, X_test, Y_test = data_mnist()
     assert Y_train.shape[1] == 10.
     label_smooth = FLAGS.label_smooth
@@ -44,16 +44,23 @@ def main(argv=None):
     if FLAGS.testing == 'T':
         X_train = X_train[1:256]
         Y_train = Y_train[1:256]
-    # Define input TF placeholder
-    #x = tf.placeholder(tf.float32, shape=(None, 28, 28, 1))
-    #y = tf.placeholder(tf.float32, shape=(None, 10))
     filepath = FLAGS.train_dir+FLAGS.filename
-    models, accs = train_many_and_save(filepath, cnn_model, FLAGS.t, X_train, Y_train, epochs = FLAGS.nb_epochs, X_test = X_test, Y_test = Y_test, do_eval=True)
+    fors_([[0,0.00001, 0.00003, 0.0001, 0.0003, 0.001],
+           [0,0.00001, 0.00003, 0.0001, 0.0003, 0.001]],
+           lambda li: train_one(lambda: model3(li[0], li[1]), 
+                                str(li[0])+"_"+str(li[1]), X_train, Y_train, epochs = FLAGS.nb_epochs, X_test = X_test, Y_test = Y_test, do_eval=True, fn_model = (lambda model, t, accuracy: save_model_t(filepath, model, t))))
 #def train_many_and_save(filepath, f, t, X_train, Y_train, epochs = 1, X_test = None, Y_test = None, do_eval=False, train_params = {}):
-
+"""
+[0,0.001, 0.01, 0.03, 0.1, 0.3],
+           [0,0.001, 0.01, 0.03, 0.1, 0.3]
+"""
 
 if __name__ == '__main__':
     app.run()
+
+"""
+train_one(f, s, X_train, Y_train, epochs = 1, X_test = None, Y_test = None, do_eval=False, fn_model = None, cont = False, verbosity = 1)
+"""
 
 """
 # Run test
