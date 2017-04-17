@@ -100,3 +100,35 @@ Examples transfer very well (90+% success rate).
 mkdir experiment_adv_transfer
 nohup python experiment_adv_transfer.py --train_dir=pretrain5_model1_smooth0/ --label_smooth=0 --t=100 --filename=nets --ep=0.3 --save_as=experiment_adv_transfer/transfer.txt > experiment_adv_transfer/log.txt 2>&1 &
 ```
+
+# Train on adversarial examples for a given net
+
+
+```
+mkdir experiment_train_on_adv
+nohup python experiment_train_on_adv.py --nb_epochs=6 > experiment_train_on_adv/log.txt 2>&1 &
+mkdir experiment_train_on_adv2
+nohup python experiment_train_on_adv2.py --nb_epochs=6 > experiment_train_on_adv2/log.txt 2>&1 &
+mkdir experiment_train_on_bogus
+nohup python experiment_train_on_bogus.py --nb_epochs=6 > experiment_train_on_bogus/log.txt 2>&1 &
+```
+
+Results: (accuracy over epochs)
+
+* Train normally: .9377, .9785, .9848, .9874, .9893, .9905. 2nd run: .9334, .9781, .9844, .9865, .9887, .9906.
+* Train with adversarial only: .9320. .9773, .9828,.9848, .9859, .9875
+* Train with normal and adversarial (120000 samples): (`experiment_train_on_adv2`) .9330, .9853, .9875, .9887, .9893, ,.9896
+
+# Sigmoids
+
+How do sigmoids do?
+
+```
+mkdir experiment_sigmoid
+nohup python experiment_sigmoid.py --train_dir=experiment_sigmoid/ --max_steps=6000 > experiment_sigmoid/log.txt 2>&1 & 
+mkdir experiment_sigmoid_ep0
+nohup python experiment_sigmoid.py --train_dir=experiment_sigmoid_ep0/ --max_steps=6000 --epsilon=0 > experiment_sigmoid_ep0/log.txt 2>&1 & 
+```
+
+Accuracy is much worse. It also is weak to adversarial examples.
+

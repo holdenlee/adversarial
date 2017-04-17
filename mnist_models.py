@@ -84,6 +84,18 @@ def model3(la = 0, ala = 0):
                #activity_regularizer=regularizers.l1(ala)),
         Activation('softmax')])
 
+def model_sigmoid():
+    return Sequential([
+        Conv2D(64, (8, 8), input_shape=(28,28,1), strides = (2, 2), padding = "same"),
+        Activation('sigmoid'),
+        Conv2D(128, (6, 6), strides = (2, 2), padding = "valid"),
+        Activation('sigmoid'),
+        Conv2D(128, (5, 5), padding = "valid"),
+        Activation('sigmoid'),
+        Flatten(),
+        Dense(10),
+        Activation('softmax')])
+
 def make_model(model):
     def m(x,y):
         print("Model:")

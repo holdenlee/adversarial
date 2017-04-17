@@ -89,7 +89,12 @@ def make_adversarial_model(model, adv_f, x, *inputs):
     inference = d['inference']
     reg = get_with_default(d, 'regularization', 0)
     epsilon = tf.placeholder(tf.float32)
+    print("make_adversarial_model")
+    print(adv_f)
+    print(x)
+    print(epsilon)
     advs = adv_f(x,inference,epsilon)
+    print('advs:',advs)
     if isinstance(advs, tuple):
         (adv_x, adv_grad) = advs
         d['adv_grad'] = adv_grad

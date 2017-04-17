@@ -39,8 +39,16 @@ def examine_filters(m1, layer=0):
     print(normed_dots)
     return dots, normed_dots
 
-def save_image(array, name):
-    img = Image.fromarray(np.ndarray.astype(255*array.reshape((28,28)), np.dtype(np.uint8)), mode='L')
+def save_filters(m1, filename, layer=0):
+    #this is 8x8x1x64
+    filters = m1.layers[layer].get_weights()[0]
+    filters = np.transpose(filters, (3, 0, 1, 2))
+    filters = filters.reshape((64,8,8))
+    for i in range(64):
+        save_image(filters[i], filename+str(i), shape=(8,8))
+
+def save_image(array, name, shape = (28,28)):
+    img = Image.fromarray(np.ndarray.astype(255*array.reshape(shape), np.dtype(np.uint8)), mode='L')
     img.save('%s.png' % name)
 """
 def save_dict_as_pics(A, x, y, unnorm_f= lambda x:x, filename = 'dict'):

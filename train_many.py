@@ -97,3 +97,15 @@ def load_many(model, filepath='pretrain5_model1_smooth0/nets', adv = fgsm2_clip,
         eps.append(epsilon)
     #print(model.get_weights())
     return sess, models, dicts, eps, x, y
+
+def load_one(model, filepath, adv=fgsm2_clip):
+    K.set_learning_phase(0)
+    sess = tf.Session()
+    K.set_session(sess)
+    x = tf.placeholder(tf.float32, shape=(None, 28, 28, 1))
+    y = tf.placeholder(tf.float32, shape=(None, 10))
+    m = model()
+    m.load_weights(filepath + '.hdf5')
+    d, epsilon = make_adversarial_model(make_model(m), adv, x, y)
+    #print(model.get_weights())
+    return sess, m, d, epsilon, x, y
