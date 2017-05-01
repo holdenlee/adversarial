@@ -19,6 +19,9 @@ from keras import backend
 from train_many import * 
 from utils import *
 
+from mwu import *
+from mwu_adv import *
+
 FLAGS = flags.FLAGS
 
 flags.DEFINE_string('train_dir', 'pretrain5_model1_smooth0/', 'Directory storing the saved model.')
@@ -59,14 +62,20 @@ if __name__=='__main__':
     load_model_t(filepath, m, 0)
     #    model.load_weights(filepath, by_name=True)
     print('Loaded model %d' % 0)
-    d, epsilon = make_adversarial_model(make_model(m), adv, x, y)
-    #2 Restoring MWU
-    saver = tf.train.Saver()
+    d, epsilon = make_adversarial_model(make_model(m), fgsm2_clip, x, y)
 
-    d2, ph_dict, epvar = mnist_mwu_model_adv(lambda: mnist_mwu_model(u=20,u2=20), fgsm) #the adversarial part doesn't matter
-    with tf.Session() as sess:
+    adv_exs = sess.run(d['adv_x'], {x:X_test, y:Y_test, epsilon: FLAGS.ep})
+    #acc = sess.run(d2['accuracy'], {x:adv_exs, y:Y_test})
+    tf.reset_default_graph()
+    
+    #2 Restoring MWU
+    sess = tf.Session()
+    d2, ph_dict, epvar = mnist_mwu_model_adv(fgsm, lambda: mnist_mwu_model(u=20,u2=20)) #the adversarial part doesn't matter
+    saver = tf.train.Saver()
+    #with tf.Session() as sess:
     # Restore variables from disk.
-        saver.restore(sess, "train_adv_mwu/model.ckpt")
-        print("Model restored.")
-    acc = transfer(sess, d, d2, epsilon, ph_dict['x'], ph_dict['y'], X_test, Y_test, 0)
+    saver.restore(sess, tf.train.latest_checkpoint("./train_adv_mwu/"))
+    print("Model restored.")
+    #acc = transfer(sess, d, d2, epsilon, ph_dict['x'], ph_dict['y'], X_test, Y_test, 0)
+    acc = sess.run(d2['accuracy'], {ph_dict['x']:adv_exs, ph_dict['y']:Y_test})
     print("Accuracy: %f" % acc)

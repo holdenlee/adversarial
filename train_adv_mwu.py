@@ -74,7 +74,7 @@ def train_mwu(f, adv_f, X_train, Y_train, X_test, Y_test, label_smooth = 0, batc
 
 def main(_):
     X_train, Y_train, X_test, Y_test = data_mnist()
-    train_mwu(lambda: mnist_mwu_model(u=20,u2=20), fgsm, X_train, Y_train, X_test, Y_test, label_smooth = 0, batch_size = 100, eval_steps = 600, learning_rate=0.1, epsilon=0.3, print_steps=100, save_steps =1200, train_dir = 'train_adv_mwu/', filename = 'model.ckpt', summary_steps=1200, max_steps=3600, verbosity=1)
+    train_mwu(lambda: mnist_mwu_model(u=50,u2=20), fgsm, X_train, Y_train, X_test, Y_test, label_smooth = 0, batch_size = 100, eval_steps = 600, learning_rate=0.1, epsilon=0.03, print_steps=100, save_steps =1200, train_dir = 'train_adv_mwu_50/', filename = 'model.ckpt', summary_steps=1200, max_steps=3600, verbosity=1)
 
 if __name__=='__main__':
     app.run()
