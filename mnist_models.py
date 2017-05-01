@@ -140,7 +140,10 @@ def make_model_keras(model):
 #tf stopped providing this. Beware of instability?
 def cross_entropy(y, yhat, t=0):
     """R^{l*n}, R^{l*n} -> R"""
-    return tf.reduce_mean(-tf.reduce_sum(y * logt(yhat,t), reduction_indices=[-1]))
+    a = -tf.reduce_mean(-tf.reduce_sum(y * logt(yhat,t), reduction_indices=[-1]))
+    a=tf.Print(a,[a,y,yhat],'a:', summarize=10)
+    return a
+        #tf.reduce_mean(-tf.reduce_sum(y * logt(yhat,t), reduction_indices=[-1]))
 
 def xe_loss(y, ys1): # ws, reg_weight):
     return cross_entropy(y, ys1, 0.00001) # + reg_weight * entropy(ws)

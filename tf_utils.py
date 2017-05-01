@@ -72,7 +72,7 @@ class BatchFeeder(object):
       self.epochs_completed = 0
       self.next_batch_fun = next_batch_fun
 
-  def next_batch(self, batch_size, *args):
+  def next_batch(self, batch_size, args):
       return self.next_batch_fun(self, batch_size, *args)
 
 """
@@ -358,6 +358,12 @@ class Trainer:
                 return False
         self.step = self.step + 1
         return True
+    def train_steps(self, steps):
+        cur = self.step
+        while self.step < cur + steps:
+            t = self.train_step()
+            if t==False:
+                return
     def train(self):
         while self.step < self.max_step:
             t = self.train_step()
@@ -422,7 +428,7 @@ def fill_feed_dict(batch_feeder, batch_size=None, args_pl=None, args = []):
   }"""
   # Create the feed_dict for the placeholders filled with the next
   # `batch size ` examples.
-  b = batch_feeder.next_batch(batch_size, *args)  if batch_size != None else {}
+  b = batch_feeder.next_batch(batch_size, args)  if batch_size != None else {}
   if args_pl != None:
       return {args_pl[k] : b[k] for (k,v) in args_pl.items() if k in b}
   else:

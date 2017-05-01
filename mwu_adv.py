@@ -15,15 +15,18 @@ from tf_utils import *
 from cleverhans.utils_mnist import data_mnist
 from cleverhans.attacks import fgsm
 from adv_model import *
-
 from mwu import *
+from mix import cross_entropy, logt
+#mnist_models
 
 def mnist_mwu_model_adv(adv_f = fgsm, f=mnist_mwu_model):
     m = f()
     #THIS MUST BE OUTSIDE otherwise 2 copies will be made!
     def model(x,y):
-        predictions, Ws, bs = m(x)
+        predictions= m(x)
         loss = cross_entropy(y, predictions, 0.00001)
+        #loss = tf.Print(loss, [y, predictions, logt(predictions,0.00001), y*logt(predictions,0.0001)], 'actual and true:', summarize=10)
+        #loss = tf.Print(loss, [y, predictions], 'actual and true:', summarize=10)
         loss = tf.identity(loss, name="loss")
         acc = accuracy2(y, predictions)
         tf.add_to_collection('losses', loss)

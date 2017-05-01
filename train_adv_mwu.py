@@ -58,13 +58,14 @@ def train_mwu(f, adv_f, X_train, Y_train, X_test, Y_test, label_smooth = 0, batc
     evals = [Eval(test_data, batch_size, ['adv_accuracy'], eval_feed={'epsilon': i*0.1}, eval_steps = eval_steps, name="test (adversarial %f)" % (i*0.1)) for i in range(1,6)]
     Ws = tf.get_collection('Ws')
     bs = tf.get_collection('bs')
+    #print("collections:"+str((Ws,bs)))
     opter = lambda: MWOptimizer(Ws, bs, learning_rate=learning_rate, smoothing=0)
     addons = [Train(opter, 
                     batch_size, 
                     train_feed={'epsilon' : FLAGS.epsilon},
                     loss = 'combined_loss', 
                     print_steps=print_steps),
-                #Saver(save_steps = save_steps, checkpoint_path = os.path.join(train_dir, filename)),
+              Saver(save_steps = save_steps, checkpoint_path = os.path.join(train_dir, filename)),
                 #SummaryWriter(summary_steps = summary_steps, feed_dict = {}), #'keep_prob': 1.0
               Eval(test_data, batch_size, ['accuracy'], eval_feed={}, eval_steps = eval_steps, name="test (real)")] + evals
     trainer = Trainer(adv_model, max_steps, train_data, addons, ph_dict, train_dir = train_dir, verbosity=verbosity, sess=sess)

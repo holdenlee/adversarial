@@ -36,10 +36,10 @@ def single_model(adv_f = fgsm, f=cnn_model):
     m = f()
     #THIS MUST BE OUTSIDE otherwise 2 copies will be made!
     def model(x,y):
-        #print("Model")
-        #print(m)
-        #print(x)
-        #print(y)
+        print("Model")
+        print(m)
+        print(x)
+        print(y)
         predictions = m(x)
         loss = cross_entropy(y, predictions, 0.00001)
         loss = tf.identity(loss, name="loss")
