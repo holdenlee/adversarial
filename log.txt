@@ -1,0 +1,405 @@
+Epoch 0
+        Epoch took 5.13425898552 seconds
+Test accuracy on legitimate test examples: 0.9163
+Test accuracy on adversarial examples: 0.2248
+Epoch 1
+        Epoch took 4.54506587982 seconds
+Test accuracy on legitimate test examples: 0.9494
+Test accuracy on adversarial examples: 0.3316
+Epoch 2
+        Epoch took 4.52108407021 seconds
+Test accuracy on legitimate test examples: 0.9596
+Test accuracy on adversarial examples: 0.3949
+Epoch 3
+        Epoch took 4.59331798553 seconds
+Test accuracy on legitimate test examples: 0.9649
+Test accuracy on adversarial examples: 0.4385
+Epoch 4
+        Epoch took 4.54931092262 seconds
+Test accuracy on legitimate test examples: 0.9684
+Test accuracy on adversarial examples: 0.4745
+Epoch 5
+        Epoch took 4.56487321854 seconds
+Test accuracy on legitimate test examples: 0.9698
+Test accuracy on adversarial examples: 0.5087
+Epoch 6
+        Epoch took 4.51345014572 seconds
+Test accuracy on legitimate test examples: 0.9712
+Test accuracy on adversarial examples: 0.5369
+Epoch 7
+        Epoch took 4.57445812225 seconds
+Test accuracy on legitimate test examples: 0.9717
+Test accuracy on adversarial examples: 0.5672
+Epoch 8
+        Epoch took 4.63217306137 seconds
+Test accuracy on legitimate test examples: 0.974
+Test accuracy on adversarial examples: 0.5891
+Epoch 9
+        Epoch took 4.57626104355 seconds
+Test accuracy on legitimate test examples: 0.9751
+Test accuracy on adversarial examples: 0.6052
+Epoch 10
+        Epoch took 4.61728191376 seconds
+Test accuracy on legitimate test examples: 0.977
+Test accuracy on adversarial examples: 0.6275
+Epoch 11
+        Epoch took 4.56977319717 seconds
+Test accuracy on legitimate test examples: 0.978
+Test accuracy on adversarial examples: 0.6745
+Epoch 12
+        Epoch took 4.62729001045 seconds
+Test accuracy on legitimate test examples: 0.9785
+Test accuracy on adversarial examples: 0.6572
+Epoch 13
+        Epoch took 4.61212086678 seconds
+Test accuracy on legitimate test examples: 0.979
+Test accuracy on adversarial examples: 0.6724
+Epoch 14
+        Epoch took 4.61886191368 seconds
+Test accuracy on legitimate test examples: 0.9796
+Test accuracy on adversarial examples: 0.6798
+Epoch 15
+        Epoch took 4.61863899231 seconds
+Test accuracy on legitimate test examples: 0.9811
+Test accuracy on adversarial examples: 0.7271
+Epoch 16
+        Epoch took 4.63391280174 seconds
+Test accuracy on legitimate test examples: 0.9808
+Test accuracy on adversarial examples: 0.6916
+Epoch 17
+        Epoch took 4.63194203377 seconds
+Test accuracy on legitimate test examples: 0.981
+Test accuracy on adversarial examples: 0.6931
+Epoch 18
+        Epoch took 4.55943608284 seconds
+Test accuracy on legitimate test examples: 0.9819
+Test accuracy on adversarial examples: 0.764
+Epoch 19
+        Epoch took 4.60373210907 seconds
+Test accuracy on legitimate test examples: 0.982
+Test accuracy on adversarial examples: 0.6888
+Epoch 20
+        Epoch took 4.67833614349 seconds
+Test accuracy on legitimate test examples: 0.9824
+Test accuracy on adversarial examples: 0.7093
+Epoch 21
+        Epoch took 4.5836558342 seconds
+Test accuracy on legitimate test examples: 0.9841
+Test accuracy on adversarial examples: 0.7139
+Epoch 22
+        Epoch took 4.64582490921 seconds
+Test accuracy on legitimate test examples: 0.9841
+Test accuracy on adversarial examples: 0.8013
+Epoch 23
+        Epoch took 4.59662103653 seconds
+Test accuracy on legitimate test examples: 0.9846
+Test accuracy on adversarial examples: 0.8103
+Epoch 24
+        Epoch took 4.58948898315 seconds
+Test accuracy on legitimate test examples: 0.9856
+Test accuracy on adversarial examples: 0.796
+Epoch 25
+        Epoch took 4.54458498955 seconds
+Test accuracy on legitimate test examples: 0.9842
+Test accuracy on adversarial examples: 0.7037
+Epoch 26
+        Epoch took 4.62294387817 seconds
+Test accuracy on legitimate test examples: 0.986
+Test accuracy on adversarial examples: 0.7245
+Epoch 27
+        Epoch took 4.56608200073 seconds
+Test accuracy on legitimate test examples: 0.9846
+Test accuracy on adversarial examples: 0.7062
+Epoch 28
+        Epoch took 4.56905794144 seconds
+Test accuracy on legitimate test examples: 0.9868
+Test accuracy on adversarial examples: 0.7308
+Epoch 29
+        Epoch took 4.59896397591 seconds
+Test accuracy on legitimate test examples: 0.9851
+Test accuracy on adversarial examples: 0.7336
+Epoch 30
+        Epoch took 4.65564513206 seconds
+Test accuracy on legitimate test examples: 0.9873
+Test accuracy on adversarial examples: 0.8253
+Epoch 31
+        Epoch took 4.63210391998 seconds
+Test accuracy on legitimate test examples: 0.9859
+Test accuracy on adversarial examples: 0.7464
+Epoch 32
+        Epoch took 4.60127878189 seconds
+Test accuracy on legitimate test examples: 0.9875
+Test accuracy on adversarial examples: 0.749
+Epoch 33
+        Epoch took 4.59706687927 seconds
+Test accuracy on legitimate test examples: 0.9874
+Test accuracy on adversarial examples: 0.7561
+Epoch 34
+        Epoch took 4.65147304535 seconds
+Test accuracy on legitimate test examples: 0.9872
+Test accuracy on adversarial examples: 0.819
+Epoch 35
+        Epoch took 4.63953900337 seconds
+Test accuracy on legitimate test examples: 0.9876
+Test accuracy on adversarial examples: 0.7586
+Epoch 36
+        Epoch took 4.61070990562 seconds
+Test accuracy on legitimate test examples: 0.9876
+Test accuracy on adversarial examples: 0.8174
+Epoch 37
+        Epoch took 4.60930395126 seconds
+Test accuracy on legitimate test examples: 0.9875
+Test accuracy on adversarial examples: 0.8264
+Epoch 38
+        Epoch took 4.6685628891 seconds
+Test accuracy on legitimate test examples: 0.9876
+Test accuracy on adversarial examples: 0.8537
+Epoch 39
+        Epoch took 4.5147061348 seconds
+Test accuracy on legitimate test examples: 0.9876
+Test accuracy on adversarial examples: 0.7818
+Epoch 40
+        Epoch took 4.51562094688 seconds
+Test accuracy on legitimate test examples: 0.9883
+Test accuracy on adversarial examples: 0.7887
+Epoch 41
+        Epoch took 4.58812499046 seconds
+Test accuracy on legitimate test examples: 0.9884
+Test accuracy on adversarial examples: 0.775
+Epoch 42
+        Epoch took 4.61595392227 seconds
+Test accuracy on legitimate test examples: 0.9889
+Test accuracy on adversarial examples: 0.7801
+Epoch 43
+        Epoch took 4.62301516533 seconds
+Test accuracy on legitimate test examples: 0.9889
+Test accuracy on adversarial examples: 0.7862
+Epoch 44
+        Epoch took 4.57482504845 seconds
+Test accuracy on legitimate test examples: 0.9888
+Test accuracy on adversarial examples: 0.7998
+Epoch 45
+        Epoch took 4.63180494308 seconds
+Test accuracy on legitimate test examples: 0.9888
+Test accuracy on adversarial examples: 0.8544
+Epoch 46
+        Epoch took 4.59852790833 seconds
+Test accuracy on legitimate test examples: 0.9888
+Test accuracy on adversarial examples: 0.852
+Epoch 47
+        Epoch took 4.65237212181 seconds
+Test accuracy on legitimate test examples: 0.9888
+Test accuracy on adversarial examples: 0.8157
+Epoch 48
+        Epoch took 4.56935191154 seconds
+Test accuracy on legitimate test examples: 0.9886
+Test accuracy on adversarial examples: 0.8197
+Epoch 49
+        Epoch took 4.57703781128 seconds
+Test accuracy on legitimate test examples: 0.9883
+Test accuracy on adversarial examples: 0.8565
+Epoch 50
+        Epoch took 4.61263298988 seconds
+Test accuracy on legitimate test examples: 0.9895
+Test accuracy on adversarial examples: 0.8127
+Epoch 51
+        Epoch took 4.5507171154 seconds
+Test accuracy on legitimate test examples: 0.9889
+Test accuracy on adversarial examples: 0.8593
+Epoch 52
+        Epoch took 4.48860502243 seconds
+Test accuracy on legitimate test examples: 0.9882
+Test accuracy on adversarial examples: 0.869
+Epoch 53
+        Epoch took 4.62126088142 seconds
+Test accuracy on legitimate test examples: 0.988
+Test accuracy on adversarial examples: 0.8639
+Epoch 54
+        Epoch took 4.61432600021 seconds
+Test accuracy on legitimate test examples: 0.989
+Test accuracy on adversarial examples: 0.8277
+Epoch 55
+        Epoch took 4.62825703621 seconds
+Test accuracy on legitimate test examples: 0.9891
+Test accuracy on adversarial examples: 0.8376
+Epoch 56
+        Epoch took 4.63993096352 seconds
+Test accuracy on legitimate test examples: 0.9898
+Test accuracy on adversarial examples: 0.8875
+Epoch 57
+        Epoch took 4.50668692589 seconds
+Test accuracy on legitimate test examples: 0.9897
+Test accuracy on adversarial examples: 0.8464
+Epoch 58
+        Epoch took 4.60634994507 seconds
+Test accuracy on legitimate test examples: 0.9896
+Test accuracy on adversarial examples: 0.8324
+Epoch 59
+        Epoch took 4.59707999229 seconds
+Test accuracy on legitimate test examples: 0.9896
+Test accuracy on adversarial examples: 0.8856
+Epoch 60
+        Epoch took 4.60668087006 seconds
+Test accuracy on legitimate test examples: 0.99
+Test accuracy on adversarial examples: 0.8489
+Epoch 61
+        Epoch took 4.6136469841 seconds
+Test accuracy on legitimate test examples: 0.9896
+Test accuracy on adversarial examples: 0.8407
+Epoch 62
+        Epoch took 4.57972788811 seconds
+Test accuracy on legitimate test examples: 0.9895
+Test accuracy on adversarial examples: 0.8911
+Epoch 63
+        Epoch took 4.60729503632 seconds
+Test accuracy on legitimate test examples: 0.9894
+Test accuracy on adversarial examples: 0.8938
+Epoch 64
+        Epoch took 4.63947701454 seconds
+Test accuracy on legitimate test examples: 0.9897
+Test accuracy on adversarial examples: 0.8974
+Epoch 65
+        Epoch took 4.57319712639 seconds
+Test accuracy on legitimate test examples: 0.9904
+Test accuracy on adversarial examples: 0.8698
+Epoch 66
+        Epoch took 4.63660478592 seconds
+Test accuracy on legitimate test examples: 0.9899
+Test accuracy on adversarial examples: 0.881
+Epoch 67
+        Epoch took 4.64228796959 seconds
+Test accuracy on legitimate test examples: 0.9897
+Test accuracy on adversarial examples: 0.9
+Epoch 68
+        Epoch took 4.61580204964 seconds
+Test accuracy on legitimate test examples: 0.9901
+Test accuracy on adversarial examples: 0.8489
+Epoch 69
+        Epoch took 4.65422701836 seconds
+Test accuracy on legitimate test examples: 0.9899
+Test accuracy on adversarial examples: 0.8437
+Epoch 70
+        Epoch took 4.59067201614 seconds
+Test accuracy on legitimate test examples: 0.9901
+Test accuracy on adversarial examples: 0.9107
+Epoch 71
+        Epoch took 4.68749809265 seconds
+Test accuracy on legitimate test examples: 0.9905
+Test accuracy on adversarial examples: 0.9069
+Epoch 72
+        Epoch took 4.59257102013 seconds
+Test accuracy on legitimate test examples: 0.9893
+Test accuracy on adversarial examples: 0.9109
+Epoch 73
+        Epoch took 4.62474584579 seconds
+Test accuracy on legitimate test examples: 0.9903
+Test accuracy on adversarial examples: 0.9115
+Epoch 74
+        Epoch took 4.61074590683 seconds
+Test accuracy on legitimate test examples: 0.9903
+Test accuracy on adversarial examples: 0.8637
+Epoch 75
+        Epoch took 4.59011077881 seconds
+Test accuracy on legitimate test examples: 0.9905
+Test accuracy on adversarial examples: 0.915
+Epoch 76
+        Epoch took 4.58577489853 seconds
+Test accuracy on legitimate test examples: 0.9903
+Test accuracy on adversarial examples: 0.8762
+Epoch 77
+        Epoch took 4.65551495552 seconds
+Test accuracy on legitimate test examples: 0.9903
+Test accuracy on adversarial examples: 0.9024
+Epoch 78
+        Epoch took 4.64769101143 seconds
+Test accuracy on legitimate test examples: 0.9901
+Test accuracy on adversarial examples: 0.9187
+Epoch 79
+        Epoch took 4.64426112175 seconds
+Test accuracy on legitimate test examples: 0.9904
+Test accuracy on adversarial examples: 0.9258
+Epoch 80
+        Epoch took 4.61303591728 seconds
+Test accuracy on legitimate test examples: 0.9906
+Test accuracy on adversarial examples: 0.8836
+Epoch 81
+        Epoch took 4.60367083549 seconds
+Test accuracy on legitimate test examples: 0.9909
+Test accuracy on adversarial examples: 0.9338
+Epoch 82
+        Epoch took 4.58857297897 seconds
+Test accuracy on legitimate test examples: 0.9913
+Test accuracy on adversarial examples: 0.9235
+Epoch 83
+        Epoch took 4.55995893478 seconds
+Test accuracy on legitimate test examples: 0.9908
+Test accuracy on adversarial examples: 0.8849
+Epoch 84
+        Epoch took 4.58507585526 seconds
+Test accuracy on legitimate test examples: 0.9903
+Test accuracy on adversarial examples: 0.9215
+Epoch 85
+        Epoch took 4.63717889786 seconds
+Test accuracy on legitimate test examples: 0.9908
+Test accuracy on adversarial examples: 0.8854
+Epoch 86
+        Epoch took 4.71335411072 seconds
+Test accuracy on legitimate test examples: 0.9907
+Test accuracy on adversarial examples: 0.9085
+Epoch 87
+        Epoch took 4.6196410656 seconds
+Test accuracy on legitimate test examples: 0.991
+Test accuracy on adversarial examples: 0.949
+Epoch 88
+        Epoch took 4.6560459137 seconds
+Test accuracy on legitimate test examples: 0.9907
+Test accuracy on adversarial examples: 0.9303
+Epoch 89
+        Epoch took 4.6515879631 seconds
+Test accuracy on legitimate test examples: 0.9913
+Test accuracy on adversarial examples: 0.9093
+Epoch 90
+        Epoch took 4.60525608063 seconds
+Test accuracy on legitimate test examples: 0.9913
+Test accuracy on adversarial examples: 0.9002
+Epoch 91
+        Epoch took 4.60726499557 seconds
+Test accuracy on legitimate test examples: 0.9912
+Test accuracy on adversarial examples: 0.8827
+Epoch 92
+        Epoch took 4.58995604515 seconds
+Test accuracy on legitimate test examples: 0.9912
+Test accuracy on adversarial examples: 0.9248
+Epoch 93
+        Epoch took 4.64775085449 seconds
+Test accuracy on legitimate test examples: 0.9907
+Test accuracy on adversarial examples: 0.9338
+Epoch 94
+        Epoch took 4.63937711716 seconds
+Test accuracy on legitimate test examples: 0.9916
+Test accuracy on adversarial examples: 0.9071
+Epoch 95
+        Epoch took 4.63766503334 seconds
+Test accuracy on legitimate test examples: 0.9913
+Test accuracy on adversarial examples: 0.9076
+Epoch 96
+        Epoch took 4.67402505875 seconds
+Test accuracy on legitimate test examples: 0.9912
+Test accuracy on adversarial examples: 0.9447
+Epoch 97
+        Epoch took 4.64877009392 seconds
+Test accuracy on legitimate test examples: 0.9917
+Test accuracy on adversarial examples: 0.9266
+Epoch 98
+        Epoch took 4.54726004601 seconds
+Test accuracy on legitimate test examples: 0.9907
+Test accuracy on adversarial examples: 0.9315
+Epoch 99
+        Epoch took 4.59381699562 seconds
+Test accuracy on legitimate test examples: 0.9915
+Test accuracy on adversarial examples: 0.9224
+Completed model training.
+/home/optml/holdenl/cleverhans/cleverhans/utils_tf.py:34: UserWarning: Setting parameters (batch_size) from TensorFlow FLAGS is deprecated.
+  'deprecated.'.format(name))
+Test accuracy on legitimate test examples: 0.9915
+Test accuracy on adversarial examples: 0.9224
