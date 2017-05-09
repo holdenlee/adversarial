@@ -63,7 +63,6 @@ if __name__=='__main__':
     #    model.load_weights(filepath, by_name=True)
     print('Loaded model %d' % 0)
     d, epsilon = make_adversarial_model(make_model(m), fgsm2_clip, x, y)
-
     adv_exs = sess.run(d['adv_x'], {x:X_test, y:Y_test, epsilon: FLAGS.ep})
     #acc = sess.run(d2['accuracy'], {x:adv_exs, y:Y_test})
     tf.reset_default_graph()

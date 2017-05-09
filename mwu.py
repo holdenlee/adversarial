@@ -45,7 +45,7 @@ class MWOptimizer:
     def compute_gradients(self, y):
         self.grads = tf.gradients(y,self.ws)
         self.b_grads = tf.gradients(y,self.bs)
-        print("computing gradients:"+str((self.grads, self.b_grads)))
+        #print("computing gradients:"+str((self.grads, self.b_grads)))
         return (self.grads, self.b_grads)
     def apply_gradients(self, gradients, global_step=None):
         #if self.grads == None:
@@ -59,7 +59,7 @@ def make_mw_ops_with_biases(ws, bs, eta, y=None, gradients=None, smoothing=0, gl
         b_grads = tf.gradients(y, bs)
     else:
         (grads, b_grads) = gradients
-    print('making grads: ', gradients)
+    #print('making grads: ', gradients)
     w_assign_ops = []
     b_assign_ops = []
     if global_step !=None:
@@ -131,7 +131,7 @@ def dirichlet(dims,n):
 def dirichlet_initializer(dims,n):
     s = prod(dims)
     r = np.random.dirichlet(np.ones([s+2]), n).transpose().astype(np.float32)
-    print(r[0,0:10])
+    #print(r[0,0:10])
     return np.reshape(r[0:s,:], dims+[n]), np.ndarray.flatten(r[s:s+2,:])
 
 def mwu_linear_layer(x, n, u=50, name='fc'):

@@ -9,7 +9,7 @@ from cleverhans.utils_tf import model_train, model_eval, batch_eval
 from cleverhans.attacks import fgsm
 from cleverhans.utils import cnn_model
 
-from mnist_model import *
+#from mnist_model import *
 
 import os.path
 
@@ -141,7 +141,7 @@ def make_model_keras(model):
 def cross_entropy(y, yhat, t=0):
     """R^{l*n}, R^{l*n} -> R"""
     a = -tf.reduce_mean(-tf.reduce_sum(y * logt(yhat,t), reduction_indices=[-1]))
-    a=tf.Print(a,[a,y,yhat],'a:', summarize=10)
+    #a=tf.Print(a,[a,y,yhat],'a:', summarize=10)
     return a
         #tf.reduce_mean(-tf.reduce_sum(y * logt(yhat,t), reduction_indices=[-1]))
 
