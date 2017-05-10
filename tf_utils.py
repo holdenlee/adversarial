@@ -334,6 +334,7 @@ class Trainer:
         self.sess = sess
         self.gets_dict = {}
         self.outputs = {}
+        #print('Train dir:', train_dir)
         ensure_dir(train_dir)
     def init(self):
         # create session
@@ -439,15 +440,16 @@ def map_feed_dict(feed_dict):
     return map_keys(lambda x: tf.get_default_graph().get_tensor_by_name(x) if isinstance(x,str) else x, feed_dict)
 
 #y_ is actual labels, y is predicted probabilities
-def accuracy(y_, y):
-    correct_prediction = tf.equal(tf.argmax(y,1), y_)
+def accuracy(y_, y, vector=False):
+    if vector: 
+        correct_prediction = tf.equal(tf.argmax(y,1), tf.argmax(y_,1))
+    else:
+        correct_prediction = tf.equal(tf.argmax(y,1), y_)
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
     return accuracy
 
 def accuracy2(y_,y):
-    correct_prediction = tf.equal(tf.argmax(y,1), tf.argmax(y_,1))
-    accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-    return accuracy
+    return accuracy(y_, y, True)
 
 """
 BATCH_SIZE = 100

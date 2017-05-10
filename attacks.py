@@ -2,6 +2,9 @@ import tensorflow as tf
 from utils import *
 from cleverhans import utils_tf
 
+def fgsm_clip(x, predictions, eps):
+    return fgsm(x,predictions,eps,0,1)
+
 def fgsm2(x, predictions, eps, clip_min=None, clip_max=None):
     """
     TensorFlow implementation of the Fast Gradient
@@ -22,16 +25,22 @@ def fgsm2(x, predictions, eps, clip_min=None, clip_max=None):
     signed_grad = tf.sign(grad)
 
     # Multiply by constant epsilon
-    scaled_signed_grad = eps * signed_grad
-
+    scaled_signed_grad = tf.multiply(eps, signed_grad)
+    #eps * signed_grad
+    print('fgsm2:',eps.get_shape())
+    print('fgsm2:',signed_grad.get_shape())
+    print('fgsm2:',scaled_signed_grad.get_shape())
     # Add perturbation to original example to obtain adversarial example
     adv_x = tf.stop_gradient(x + scaled_signed_grad)
+    print('fgsm2:', adv_x)
 
     # If clipping is needed, reset all values outside of [clip_min, clip_max]
     if (clip_min is not None) and (clip_max is not None):
         adv_x = tf.clip_by_value(adv_x, clip_min, clip_max)
 
     unit_grad = grad / tf.norm(grad)
+    print('fgsm2:', eps, signed_grad, scaled_signed_grad, x, adv_x)
+
     return (adv_x, unit_grad)
 
 def fgsm2_clip(x, predictions, eps):

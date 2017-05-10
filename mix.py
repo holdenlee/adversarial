@@ -7,6 +7,7 @@ import tensorflow as tf
 #import tensorflow.contrib.slim as slim
 from tensorflow.examples.tutorials.mnist import input_data
 from tf_vars import *
+from mnist_models import *
 
 # ex. f = cnn_model
 # assume that f already takes the softmax
@@ -36,14 +37,15 @@ def mix(x, fs, batch_size=100): #128
     ys2 = tf.reshape(tf.matmul(ys1, ws_tiled), shape=[batch_size,-1])
     return (ys2, ws, ys1)
 
+"""
 def logt(x, t=0):
     return tf.log(tf.maximum(x, t))
 
 #tf stopped providing this. Beware of instability?
 def cross_entropy(y, yhat, t=0):
-    """R^{l*n}, R^{l*n} -> R"""
+    #R^{l*n}, R^{l*n} -> R
     return tf.reduce_mean(-tf.reduce_sum(y * logt(yhat,t), reduction_indices=[-1]))
-
+"""
 #def entropy(y, t=0):
 #    return tf.reduce_mean(-tf.reduce_sum(y * logt(y,t), reduction_indices=[-1]))
 def entropy_reg(ws, t=0):

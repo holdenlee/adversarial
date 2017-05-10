@@ -178,6 +178,14 @@ def printv(s, v, lim):
         print(s)
 
 """
+Conditionals. Warning: this is strict.
+"""
+def ifs(x, li):
+    for (v, k) in li:
+        if x==v:
+            return k
+
+"""
 Other
 """
 
