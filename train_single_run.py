@@ -50,7 +50,7 @@ def main(_):
     adv_model, ph_dict, epsilon = make_adversarial_model_from_logits_with_inputs(model, fgsm2_clip)
     #adv_model, ph_dict, epsilon =  make_adversarial_model(make_model_from_logits(m), fgsm2_clip, x, y)
     #single_model()
-    print(adv_model)
+    #print(adv_model)
     evals = [Eval(test_data, FLAGS.batch_size, ['adv_accuracy'], eval_feed={'epsilon': i*0.1}, eval_steps = FLAGS.eval_steps, name="test (adversarial %f)" % (i*0.1)) for i in range(1,6)]
     addons = [GlobalStep(),
                 #TrackAverages(), #do this before train (why?)

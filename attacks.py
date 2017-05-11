@@ -58,7 +58,7 @@ def fg(x, predictions):
 
     return grad
 
-def fgm(x, predictions, eps, clip_min=None, clip_max=None):
+def fgm2(x, predictions, eps, clip_min=None, clip_max=None):
     """
     TensorFlow implementation of the Fast Gradient method.
     :param x: the input placeholder
@@ -81,7 +81,7 @@ def fgm(x, predictions, eps, clip_min=None, clip_max=None):
     scaled_unit_grad = eps * unit_grad
 
     # Add perturbation to original example to obtain adversarial example
-    adv_x = tf.stop_gradient(x + scaled_signed_grad)
+    adv_x = tf.stop_gradient(x + scaled_unit_grad)
 
     # If clipping is needed, reset all values outside of [clip_min, clip_max]
     # Note you have to give BOTH min and max to clip. -HL
@@ -89,3 +89,7 @@ def fgm(x, predictions, eps, clip_min=None, clip_max=None):
         adv_x = tf.clip_by_value(adv_x, clip_min, clip_max)
 
     return (adv_x, unit_grad)
+
+def fgm(x, predictions, eps, clip_min=None, clip_max=None):
+    adv_x, _ = fgm2(x, predictions, eps, clip_min, clip_max)
+    return adv_x

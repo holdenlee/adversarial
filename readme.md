@@ -1,6 +1,4 @@
-# Instructions
-
-## Setup
+# Setup
 
 Clone [cleverhans](https://github.com/openai/cleverhans) and follow directions to install.
 
@@ -8,10 +6,82 @@ Clone [cleverhans](https://github.com/openai/cleverhans) and follow directions t
 
 Make a virtual environment with `keras` and `tensorflow`. Edit `start` with path to `cleverhans`.
 
+Note: This is set up with a old version of cleverhans and keras; may need fiddling to work with newer versions.
+
 Run every time:
 ```
 . ./start
 ```
+
+# Pipeline
+
+* Additional attacks (besides those in `cleverhans.attacks_tf`) are defined in `attacks.py` and re-exported in `adv_model.py`.
+* `mnist_util` has utilities
+	* `get_data_mnist`
+	* `get_bf_mnist` (create batch feeders)
+	* `make_phs` (make placeholders)
+	* `start_keras_session` 
+* `adv_model` has the function `make_adversarial_model` which takes a [`model` which takes inputs x (and y, epsilon,...) and outputs a dictionary with `loss`, `inference`, and `accuracy`].
+* `mnist_models` has models. The standard one (as baseline) is `model1_logits`. `model1_logits` keeps outputs in logits, while `model1_no_dropout` does a softmax. Typically use the `logit` version, as calculating cross-entropy is more stable with the logits (says tensorflow).
+	* `make_model_from_logits` takes a model like `model1_logits()` and outputs a function taking x, y to a dictionary with `loss`, `inference`, and `accuracy` (the input expected by `make_adversarial_model`).
+* `mwu` defines the MWU (EG) optimizer and the MW analogue of `model1`, which is `mnist_mwu_model(u=50,u2=50)`.
+* `mwu_adv` defines the MW analogue of `make_adv_model`, `mnist_mwu_model_adv`. (TODO: this is done with cross-entropy right now. Change so that it uses `tf.nn.softmax_cross_entropy_with_logits`.)
+	
+## Training
+
+`train_single_run` trains `model1` adversarially and saves. The code looks like:
+```
+train_data, test_data = get_bf_mnist(FLAGS.label_smooth, FLAGS.testing)
+sess = start_keras_session(1)
+model = model1_logits()
+adv_model, ph_dict, epsilon = make_adversarial_model_from_logits_with_inputs(model, fgsm2_clip)
+evals = [Eval(test_data, FLAGS.batch_size, ['adv_accuracy'], eval_feed={'epsilon': i*0.1}, eval_steps = FLAGS.eval_steps, name="test (adversarial %f)" % (i*0.1)) for i in range(1,6)]
+addons = [GlobalStep(),
+	Train(lambda gs: tf.train.AdadeltaOptimizer(learning_rate=FLAGS.learning_rate, rho=0.95, epsilon=1e-08), FLAGS.batch_size, train_feed={'epsilon' : FLAGS.epsilon}, loss = 'combined_loss', print_steps=FLAGS.print_steps),
+	Saver(save_steps = FLAGS.save_steps, checkpoint_path = os.path.join(FLAGS.train_dir, FLAGS.filename)),
+	SummaryWriter(summary_steps = FLAGS.summary_steps, feed_dict = {}),
+	Eval(test_data, FLAGS.batch_size, ['accuracy'], eval_feed={}, eval_steps = FLAGS.eval_steps, name="test (real)")] + evals
+trainer = Trainer(adv_model, FLAGS.max_steps, train_data, addons, ph_dict, train_dir = FLAGS.train_dir, verbosity=FLAGS.verbosity, sess=sess)
+trainer.init_and_train()
+trainer.finish()
+```
+`train_adv_mwu` does the same thing for the MWU model.
+
+```
+mkdir single_epochs6_ep0.3
+python train_single_run.py --train_dir=single_epochs6_ep0.3/ --max_steps=3600 --epsilon=0.3 > single_epochs6_ep0.3/log.txt
+mkdir train_adv_mwu
+python train_adv_mwu.py --train_dir=train_adv_mwu/ --max_steps=3600 --epsilon=0.3 > single_epochs6_ep0.3/log.txt
+```
+
+## Paths
+
+* Output of `train_single_run` is in
+	* `single_epochs6_ep0.3/`
+* Output of `train_adv_mwu` is in 
+	* `train_adv_mwu/`
+	
+## Evaluation and transfer
+
+To evaluate using the `cleverhans` framework, use `cleverhans_eval`. Use it as follows.
+```
+cleverhans_evaluate(model1_logits, 
+                        tf.train.latest_checkpoint('./single_epochs6_ep0.3/'), 
+                        adv_f,
+                        FLAGS.epsilon,
+                        FLAGS.batch_size)
+```
+
+To check transfer, use the functions in `transfer`. Example of use (transfer from the Keras model saved in `filepath` (`pretrain5_model1_smooth0/nets0.hdf5`) to the latest checkpoint in `train_adv_mwu/`:
+```
+model = model1_logits
+def model2():
+	d2, ph_dict, epvar = mnist_mwu_model_adv(fgsm, lambda: mnist_mwu_model(u=20,u2=20))
+	return d2, ph_dict
+mnist_adv_transfer(filepath, model, model2, ep = 0.3, adv_f = fgsm2_clip, keras=True, folder=FLAGS.to_file, label_smooth=FLAGS.label_smooth)
+```
+
+# Instructions (other experiments)
 
 ## Control
 
