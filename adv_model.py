@@ -31,16 +31,16 @@ def str_to_attack(string):
 def make_adversarial_model(model, adv_f, x, *inputs):
     #(model, adv_f, epsilon, x, *inputs)
     # please feed in epsilon in the inputs
-    print(inputs)
+    #print(inputs)
     d = model(x, *inputs)
     loss = d['loss']
     inference = d['inference']
     reg = get_with_default(d, 'regularization', 0)
     epsilon = tf.placeholder(tf.float32, shape = [])
-    print("make_adversarial_model")
-    print(adv_f)
-    print(x)
-    print(epsilon)
+    #print("make_adversarial_model")
+    #print(adv_f)
+    #print(x)
+    #print(epsilon)
     advs = adv_f(x,inference,epsilon)
     print('advs:',advs)
     if isinstance(advs, tuple):
